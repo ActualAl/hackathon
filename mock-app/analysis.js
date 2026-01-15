@@ -92,25 +92,31 @@ function init() {
         if (country.missingLanguages && country.missingLanguages.length > 0) {
             country.missingLanguages.forEach(lang => {
                 const langName = lang.language.toLowerCase();
+                // Calculate people not reached for this language in this country
+                const countryPopulation = country.population || 0;
+                const peopleNotReached = Math.round(countryPopulation * (lang.percent / 100));
+
                 if (missingLanguagesMap.has(langName)) {
                     // Add to existing - track which countries need this language
                     const existing = missingLanguagesMap.get(langName);
                     existing.countries.push(country.name);
                     existing.totalPercent += lang.percent;
+                    existing.totalPeopleNotReached += peopleNotReached;
                 } else {
                     missingLanguagesMap.set(langName, {
                         language: lang.language,
                         countries: [country.name],
-                        totalPercent: lang.percent
+                        totalPercent: lang.percent,
+                        totalPeopleNotReached: peopleNotReached
                     });
                 }
             });
         }
     });
 
-    // Convert to array and sort by number of countries (most impactful first)
+    // Convert to array and sort by people not reached (most impactful first)
     const missingLanguages = Array.from(missingLanguagesMap.values())
-        .sort((a, b) => b.countries.length - a.countries.length || b.totalPercent - a.totalPercent);
+        .sort((a, b) => b.totalPeopleNotReached - a.totalPeopleNotReached);
 
     // Render missing languages
     renderMissingLanguages(missingLanguages);
@@ -145,6 +151,7 @@ function renderMissingLanguages(languages) {
         return `
             <div class="missing-language-card">
                 <span class="missing-language-name">${lang.language}</span>
+                <span class="missing-language-people">${formatNumber(lang.totalPeopleNotReached)} people</span>
                 <span class="missing-language-countries">${countryList}</span>
             </div>
         `;

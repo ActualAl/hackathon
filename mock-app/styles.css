@@ -1038,6 +1038,12 @@ a.nav-step {
     color: var(--text-white);
 }
 
+.missing-language-people {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-red);
+}
+
 .missing-language-countries {
     font-size: 0.8rem;
     color: var(--text-secondary);
