@@ -998,6 +998,51 @@ a.nav-step {
     font-size: 1.5rem;
 }
 
+/* Missing Languages Section */
+.missing-languages-section {
+    margin-bottom: 48px;
+}
+
+.missing-languages-intro {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.missing-languages-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.missing-language-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-red);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 180px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.missing-language-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255, 0, 0, 0.15);
+}
+
+.missing-language-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-white);
+}
+
+.missing-language-countries {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
 /* Responsive adjustments for analysis page */
 @media (max-width: 992px) {
     .reach-stats {

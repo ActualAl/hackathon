@@ -13,8 +13,9 @@ const totalAudienceEl = document.getElementById('totalAudience');
 const audienceReachedEl = document.getElementById('audienceReached');
 const audienceNotReachedEl = document.getElementById('audienceNotReached');
 const notReachedPercentEl = document.getElementById('notReachedPercent');
+const missingLanguagesSection = document.getElementById('missingLanguagesSection');
+const missingLanguagesList = document.getElementById('missingLanguagesList');
 const backBtn = document.getElementById('backBtn');
-const continueBtn = document.getElementById('continueBtn');
 
 // Format large numbers
 function formatNumber(num) {
@@ -85,6 +86,35 @@ function init() {
         notReachedPercentEl.textContent = notReachedPercent + '%';
     }, 1000);
 
+    // Gather and de-duplicate missing languages across all countries
+    const missingLanguagesMap = new Map();
+    countries.forEach(country => {
+        if (country.missingLanguages && country.missingLanguages.length > 0) {
+            country.missingLanguages.forEach(lang => {
+                const langName = lang.language.toLowerCase();
+                if (missingLanguagesMap.has(langName)) {
+                    // Add to existing - track which countries need this language
+                    const existing = missingLanguagesMap.get(langName);
+                    existing.countries.push(country.name);
+                    existing.totalPercent += lang.percent;
+                } else {
+                    missingLanguagesMap.set(langName, {
+                        language: lang.language,
+                        countries: [country.name],
+                        totalPercent: lang.percent
+                    });
+                }
+            });
+        }
+    });
+
+    // Convert to array and sort by number of countries (most impactful first)
+    const missingLanguages = Array.from(missingLanguagesMap.values())
+        .sort((a, b) => b.countries.length - a.countries.length || b.totalPercent - a.totalPercent);
+
+    // Render missing languages
+    renderMissingLanguages(missingLanguages);
+
     // Store analysis data for next page
     sessionStorage.setItem('analysisData', JSON.stringify({
         countryCount: countries.length,
@@ -98,10 +128,27 @@ function init() {
     backBtn.addEventListener('click', () => {
         window.location.href = `audience.html?company=${encodeURIComponent(companyName)}`;
     });
+}
 
-    continueBtn.addEventListener('click', () => {
-        alert('Results page coming soon!');
-    });
+// Render missing languages section
+function renderMissingLanguages(languages) {
+    if (!languages || languages.length === 0) {
+        missingLanguagesSection.style.display = 'none';
+        return;
+    }
+
+    missingLanguagesList.innerHTML = languages.map(lang => {
+        const countryList = lang.countries.length <= 3
+            ? lang.countries.join(', ')
+            : `${lang.countries.slice(0, 3).join(', ')} +${lang.countries.length - 3} more`;
+
+        return `
+            <div class="missing-language-card">
+                <span class="missing-language-name">${lang.language}</span>
+                <span class="missing-language-countries">${countryList}</span>
+            </div>
+        `;
+    }).join('');
 }
 
 // Animate a value from start to end
