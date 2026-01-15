@@ -139,7 +139,7 @@ async function init() {
     }
 
     // Update page title
-    document.title = `${company.name} | Market Impact Assessment`;
+    document.title = `${company.name} | Global Impact Report`;
 
     // Update company name
     companyNameEl.textContent = company.name;

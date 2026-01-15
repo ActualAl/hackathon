@@ -107,12 +107,14 @@ function parseCSV(text) {
 
 // Calculate coverage based on language match - returns breakdown by language
 function calculateLanguageCoverage(countryCode, multimediaLanguages, langData) {
-    const result = { total: 0, breakdown: [] };
+    const result = { total: 0, breakdown: [], missingLanguages: [] };
 
     if (!langData || !langData[countryCode]) return result;
 
-    const details = langData[countryCode].details.toLowerCase();
+    const details = langData[countryCode].details;
     if (!details) return result;
+
+    const detailsLower = details.toLowerCase().trim();
 
     // Map multimedia languages to what we'd find in the CSV
     const languageMap = {
@@ -141,6 +143,12 @@ function calculateLanguageCoverage(countryCode, multimediaLanguages, langData) {
 
     let totalCoverage = 0;
 
+    // Extract all languages mentioned in the country data with their percentages
+    const countryLanguages = extractCountryLanguages(details);
+
+    // Check if this is a single-language country (details is just a language name)
+    const isSingleLanguageCountry = /^[a-z]+(\s*\(official\))?$/i.test(detailsLower);
+
     for (const lang of multimediaLanguages) {
         const langLower = lang.toLowerCase();
         const searchTerms = languageMap[langLower] || [langLower];
@@ -148,19 +156,34 @@ function calculateLanguageCoverage(countryCode, multimediaLanguages, langData) {
         for (const term of searchTerms) {
             // Look for percentage in the details
             const regex = new RegExp(term + '[^0-9]*([0-9]+\\.?[0-9]*)%', 'i');
-            const match = details.match(regex);
+            const match = detailsLower.match(regex);
 
             if (match) {
                 const percent = parseFloat(match[1]);
                 totalCoverage += percent;
                 result.breakdown.push({ language: lang, percent: Math.round(percent) });
                 break;
-            } else if (details.includes(term)) {
+            } else if (detailsLower.includes(term)) {
                 // Language mentioned but no percentage
-                // Check if it's marked as "official" - if so, estimate higher coverage
-                const officialRegex = new RegExp(term + '[^,;]*official', 'i');
-                const isOfficial = officialRegex.test(details);
-                const estimatedPercent = isOfficial ? 90 : 10;
+                let estimatedPercent = 10;
+
+                // Check if it's a single-language country (e.g., "English" or "Japanese")
+                if (isSingleLanguageCountry) {
+                    estimatedPercent = 100;
+                }
+                // Check if it's marked as "official"
+                else if (
+                    new RegExp(term + '\\s*\\([^)]*official', 'i').test(details) ||
+                    new RegExp(term + '[^,;.]*official', 'i').test(details) ||
+                    new RegExp('official[^,;.]*' + term, 'i').test(details)
+                ) {
+                    estimatedPercent = 90;
+                }
+                // Check if it's the primary/first language mentioned
+                else if (detailsLower.indexOf(term) < 15) {
+                    estimatedPercent = 80;
+                }
+
                 totalCoverage += estimatedPercent;
                 result.breakdown.push({ language: lang, percent: estimatedPercent });
                 break;
@@ -168,8 +191,112 @@ function calculateLanguageCoverage(countryCode, multimediaLanguages, langData) {
         }
     }
 
+    // Find languages we're NOT covering (languages in country but not in multimedia languages)
+    const coveredLangs = result.breakdown.map(b => b.language.toLowerCase());
+    for (const [lang, percent] of Object.entries(countryLanguages)) {
+        if (!coveredLangs.some(covered => lang.includes(covered) || covered.includes(lang))) {
+            if (percent >= 5) { // Only show languages with >= 5% speakers
+                result.missingLanguages.push({ language: capitalizeFirst(lang), percent });
+            }
+        }
+    }
+
+    // Sort missing languages by percentage descending
+    result.missingLanguages.sort((a, b) => b.percent - a.percent);
+
     result.total = Math.min(Math.round(totalCoverage), 100);
     return result;
+}
+
+// Extract languages and their percentages from country details
+function extractCountryLanguages(details) {
+    const languages = {};
+
+    // Handle empty or very short details
+    if (!details || details.trim().length === 0) {
+        return languages;
+    }
+
+    // Known languages to look for
+    const knownLanguages = [
+        'portuguese', 'spanish', 'english', 'french', 'german', 'italian',
+        'chinese', 'mandarin', 'cantonese', 'japanese', 'korean', 'russian',
+        'arabic', 'hindi', 'bengali', 'urdu', 'punjabi', 'tamil', 'telugu',
+        'dutch', 'polish', 'turkish', 'thai', 'vietnamese', 'indonesian',
+        'swedish', 'norwegian', 'danish', 'finnish', 'greek', 'czech',
+        'hungarian', 'romanian', 'ukrainian', 'hebrew', 'persian', 'tagalog',
+        'malay', 'swahili', 'yoruba', 'igbo', 'hausa', 'amharic', 'zulu',
+        'estonian', 'irish', 'gaelic', 'frisian', 'slovenian', 'croatian'
+    ];
+
+    // First try to find languages with percentages
+    const patternWithPercent = /([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s*(?:\([^)]*\))?\s*(\d+\.?\d*)%/gi;
+
+    let match;
+    while ((match = patternWithPercent.exec(details)) !== null) {
+        let lang = match[1].toLowerCase().trim();
+        const percent = parseFloat(match[2]);
+
+        // Clean up language name - remove "only" suffix
+        lang = lang.replace(/\s+only$/, '');
+
+        // Filter out non-language words
+        if (!['other', 'none', 'note', 'total', 'unspecified'].includes(lang) && percent > 0) {
+            languages[lang] = percent;
+        }
+    }
+
+    // If no percentages found, look for known languages mentioned in the text
+    if (Object.keys(languages).length === 0) {
+        const detailsLower = details.toLowerCase();
+        const detailsTrimmed = detailsLower.trim();
+
+        // Check if details is just a single language name (e.g., "English" or "Japanese")
+        const singleLanguageMatch = knownLanguages.find(lang =>
+            detailsTrimmed === lang ||
+            detailsTrimmed === lang + ' (official)' ||
+            detailsTrimmed.match(new RegExp('^' + lang + '\\s*\\(?official\\)?$', 'i'))
+        );
+
+        if (singleLanguageMatch) {
+            // Single language country - assume 100% coverage
+            languages[singleLanguageMatch] = 100;
+            return languages;
+        }
+
+        // Look for languages in the text
+        for (const lang of knownLanguages) {
+            if (detailsLower.includes(lang)) {
+                // Check if it's marked as official (various patterns)
+                const isOfficial =
+                    new RegExp(lang + '\\s*\\([^)]*official[^)]*\\)', 'i').test(details) ||
+                    new RegExp(lang + '[^,;.]*official', 'i').test(details) ||
+                    new RegExp('official[^,;.]*' + lang, 'i').test(details);
+
+                // Check if it appears to be the primary/first language mentioned
+                const isPrimary = detailsLower.indexOf(lang) < 20;
+
+                // Estimate percentage
+                let estimatedPercent = 15;
+                if (isOfficial && isPrimary) {
+                    estimatedPercent = 85;
+                } else if (isOfficial) {
+                    estimatedPercent = 50;
+                } else if (isPrimary) {
+                    estimatedPercent = 30;
+                }
+
+                languages[lang] = estimatedPercent;
+            }
+        }
+    }
+
+    return languages;
+}
+
+// Capitalize first letter
+function capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // Calculate coverage per country based on multimedia languages
@@ -180,7 +307,8 @@ function calculateCountryCoverage(countries, multimediaLanguages, langData) {
             ...country,
             reached: coverage.total,
             notReached: 100 - coverage.total,
-            breakdown: coverage.breakdown
+            breakdown: coverage.breakdown,
+            missingLanguages: coverage.missingLanguages
         };
     });
 }
@@ -310,19 +438,78 @@ function renderCountryBars(countries) {
             ? country.breakdown.map(b => `<span class="lang-label">${b.language}: ${b.percent}%</span>`).join('')
             : '<span class="lang-label">No language coverage</span>';
 
+        // Build tooltip content for missing languages
+        const missingTooltip = country.missingLanguages && country.missingLanguages.length > 0
+            ? country.missingLanguages.map(m => `${m.language}: ${m.percent}%`).join('\n')
+            : 'No additional languages identified';
+
         return `
             <div class="country-bar-row" data-country="${country.name}">
                 <span class="country-bar-label">${country.name}</span>
                 <div class="country-bar-container">
                     <div class="country-bar-track">
                         <div class="country-bar-fill"></div>
-                        <div class="country-bar-empty"></div>
+                        <div class="country-bar-empty" data-missing="${encodeURIComponent(missingTooltip)}"></div>
                     </div>
                     <div class="country-bar-languages">${languageLabels}</div>
                 </div>
             </div>
         `;
     }).join('');
+
+    // Add hover tooltip functionality
+    setupMissingLanguageTooltips();
+}
+
+// Setup tooltips for missing languages on hover
+function setupMissingLanguageTooltips() {
+    // Create tooltip element if it doesn't exist
+    let tooltip = document.getElementById('missing-lang-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'missing-lang-tooltip';
+        tooltip.className = 'missing-lang-tooltip';
+        document.body.appendChild(tooltip);
+    }
+
+    const emptyBars = document.querySelectorAll('.country-bar-empty');
+    emptyBars.forEach(bar => {
+        bar.addEventListener('mouseenter', (e) => {
+            const missing = decodeURIComponent(bar.dataset.missing || '');
+            if (missing) {
+                tooltip.innerHTML = '<strong>Languages to cover:</strong><br>' + missing.replace(/\n/g, '<br>');
+                tooltip.style.display = 'block';
+                positionTooltip(e, tooltip);
+            }
+        });
+
+        bar.addEventListener('mousemove', (e) => {
+            positionTooltip(e, tooltip);
+        });
+
+        bar.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+    });
+}
+
+// Position tooltip near cursor
+function positionTooltip(e, tooltip) {
+    const offset = 15;
+    let left = e.pageX + offset;
+    let top = e.pageY + offset;
+
+    // Prevent tooltip from going off-screen
+    const rect = tooltip.getBoundingClientRect();
+    if (left + rect.width > window.innerWidth) {
+        left = e.pageX - rect.width - offset;
+    }
+    if (top + rect.height > window.innerHeight + window.scrollY) {
+        top = e.pageY - rect.height - offset;
+    }
+
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
 }
 
 // Animate country bars
