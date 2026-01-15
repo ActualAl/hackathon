@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audience Reach | Market Impact Assessment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page">
+        <!-- Header -->
+        <header class="header">
+            <a href="index.html" class="logo">CaptionHub</a>
+            <nav class="nav">
+                <a href="company.html" class="nav-step completed">1. Company</a>
+                <a href="audience.html" class="nav-step completed">2. Audience</a>
+                <span class="nav-step active">3. Analysis</span>
+                <span class="nav-step">4. Results</span>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main main-top">
+            <div class="container">
+                <h1 class="page-title animate-in">Audience Reach</h1>
+
+                <!-- Reach Stats -->
+                <div class="reach-stats animate-in delay-1">
+                    <div class="reach-card">
+                        <div class="reach-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <p class="reach-label">Countries</p>
+                        <p class="reach-value" id="countryCount">--</p>
+                    </div>
+                    <div class="reach-card">
+                        <div class="reach-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <p class="reach-label">Total Audience</p>
+                        <p class="reach-value" id="totalAudience">--</p>
+                    </div>
+                    <div class="reach-card">
+                        <div class="reach-icon reached">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <p class="reach-label">Audience Reached</p>
+                        <p class="reach-value" id="audienceReached">--</p>
+                    </div>
+                    <div class="reach-card">
+                        <div class="reach-icon not-reached">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </div>
+                        <p class="reach-label">Audience Not Reached</p>
+                        <p class="reach-value" id="audienceNotReached">--</p>
+                    </div>
+                </div>
+
+                <!-- Summary Message -->
+                <div class="reach-summary animate-in delay-2">
+                    <p><span id="notReachedPercent">--</span> of your potential audience is not being reached</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="actions animate-in delay-3">
+                    <button class="btn-secondary" id="backBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back
+                    </button>
+                    <button class="btn-primary" id="continueBtn">
+                        Continue to Results
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by CaptionHub</p>
+        </footer>
+    </div>
+
+    <script src="analysis.js?v=1"></script>
+</body>
+</html>

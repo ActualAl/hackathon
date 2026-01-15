@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Impact Assessment | CaptionHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">CaptionHub</div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="content">
+                <p class="label">Market Impact Assessment</p>
+                <h1 class="title">Discover Your<br>Global Potential</h1>
+                <p class="subtitle">
+                    Enter a company name to analyze their multimedia localization
+                    strategy and global audience reach.
+                </p>
+
+                <form class="search-form" id="companyForm">
+                    <div class="input-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                        <input
+                            type="text"
+                            id="companyInput"
+                            class="company-input"
+                            placeholder="Enter company name..."
+                            autocomplete="off"
+                            required
+                        >
+                        <button type="submit" class="submit-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+
+                <p class="hint">Try: Acme Inc, Netflix, Spotify, Adobe...</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by CaptionHub</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

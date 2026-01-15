@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Audience | Market Impact Assessment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="page">
+        <!-- Header -->
+        <header class="header">
+            <a href="index.html" class="logo">CaptionHub</a>
+            <nav class="nav">
+                <a href="company.html" class="nav-step completed">1. Company</a>
+                <span class="nav-step active">2. Audience</span>
+                <span class="nav-step">3. Analysis</span>
+                <span class="nav-step">4. Results</span>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main main-top">
+            <div class="container">
+                <h1 class="page-title animate-in">Current Audience</h1>
+
+                <div class="audience-grid">
+                    <!-- Countries Chart -->
+                    <div class="chart-card animate-in delay-1">
+                        <div class="chart-header">
+                            <p class="chart-label">Countries</p>
+                            <span class="data-badge red">Clay: countries</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="countriesChart"></canvas>
+                        </div>
+                        <div class="chart-footer">
+                            <p class="total-audience">
+                                Total audience size: <span id="totalAudience">--</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Multimedia Languages -->
+                    <div class="chart-card animate-in delay-2">
+                        <div class="chart-header">
+                            <p class="chart-label">Multimedia Languages</p>
+                            <span class="data-badge red">Clay</span>
+                        </div>
+                        <div class="languages-container">
+                            <div class="languages-list" id="languagesList">
+                                <!-- Languages will be populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coverage Bars -->
+                <div class="coverage-section animate-in delay-3">
+                    <h2 class="section-subtitle">In the Countries You Operate</h2>
+                    <div class="country-bars" id="countryBars">
+                        <!-- Country bars will be populated by JS -->
+                    </div>
+                    <div class="coverage-legend">
+                        <div class="legend-items">
+                            <span class="legend-item"><span class="legend-dot reached"></span> Reached</span>
+                            <span class="legend-item"><span class="legend-dot not-reached"></span> Not Reached</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="actions animate-in delay-4">
+                    <button class="btn-secondary" id="backBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Back
+                    </button>
+                    <button class="btn-primary" id="continueBtn">
+                        Continue to Analysis
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by CaptionHub</p>
+        </footer>
+    </div>
+
+    <script src="audience.js?v=13"></script>
+</body>
+</html>

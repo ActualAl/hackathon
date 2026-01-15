@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Summary | Market Impact Assessment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page">
+        <!-- Header -->
+        <header class="header">
+            <a href="index.html" class="logo">CaptionHub</a>
+            <nav class="nav">
+                <span class="nav-step active">1. Company</span>
+                <span class="nav-step">2. Audience</span>
+                <span class="nav-step">3. Analysis</span>
+                <span class="nav-step">4. Results</span>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main main-top">
+            <div class="container">
+                <p class="section-label animate-in">Company Summary</p>
+
+                <div class="company-grid">
+                    <!-- Logo Section -->
+                    <div class="company-logo-section animate-in delay-1">
+                        <div class="logo-container" id="logoContainer">
+                            <div class="logo-placeholder" id="logoPlaceholder">
+                                <span id="logoInitial">?</span>
+                            </div>
+                            <img id="companyLogo" class="company-logo-img" style="display: none;" alt="Company Logo">
+                        </div>
+                    </div>
+
+                    <!-- Details Section -->
+                    <div class="company-details animate-in delay-2">
+                        <h1 class="company-name" id="companyName">Loading...</h1>
+
+                        <div class="company-stats">
+                            <div class="stat-row">
+                                <span class="stat-value" id="employeeCount">--</span>
+                                <span class="stat-label">employees</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-value" id="countryCount">--</span>
+                                <span class="stat-label">countries served</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-value" id="revenue">--</span>
+                                <span class="stat-label">annual revenue</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-value link" id="website">--</span>
+                            </div>
+                        </div>
+
+                        <div class="data-sources">
+                            <span class="data-badge green">Manual input</span>
+                            <span class="data-badge orange">Domain name</span>
+                            <span class="data-badge orange">LinkedIn</span>
+                            <span class="data-badge cyan">Clearbit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="actions animate-in delay-3">
+                    <button class="btn-primary" id="continueBtn">
+                        Continue to Audience Analysis
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by CaptionHub</p>
+        </footer>
+    </div>
+
+    <script src="company.js?v=4"></script>
+</body>
+</html>
