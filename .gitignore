@@ -1,9 +1,6 @@
 # Dependencies
 node_modules/
 
-# Debug files
-*.png
-
 # npm
 package-lock.json
 
